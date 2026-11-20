@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>티켓팅 좌석 매니저 - 자리 정리부터 교환까지 | 루미 오락실</title>
+<meta name="description" content="콘서트 좌석 배치도에 색을 칠해 자리를 정리하고, 교환 문구까지 만드는 툴">
+<meta name="keywords" content="티켓팅 좌석 매니저, 콘서트 좌석 배치도, 좌석 교환, 티켓 교환, 맞교환 문구, 루미 오락실, lumimori38">
+<meta name="author" content="lumimori38">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://lumimori38.github.io/ticketing-seat-manager/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="루미 오락실">
+<meta property="og:title" content="티켓팅 좌석 매니저 - 자리 정리부터 교환까지 | 루미 오락실">
+<meta property="og:description" content="콘서트 좌석 배치도에 색을 칠해 자리를 정리하고, 교환 문구까지 만드는 툴">
+<meta property="og:url" content="https://lumimori38.github.io/ticketing-seat-manager/">
+<meta property="og:image" content="https://lumimori38.github.io/ticketing-seat-manager/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@lumimori38">
+<meta name="twitter:creator" content="@lumimori38">
+<meta name="twitter:title" content="티켓팅 좌석 매니저 - 자리 정리부터 교환까지 | 루미 오락실">
+<meta name="twitter:description" content="콘서트 좌석 배치도에 색을 칠해 자리를 정리하고, 교환 문구까지 만드는 툴">
+<meta name="twitter:image" content="https://lumimori38.github.io/ticketing-seat-manager/og-image.png">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" type="image/png" sizes="32x32" href="https://lumimori38.github.io/favicon-32.png">
+<link rel="apple-touch-icon" href="https://lumimori38.github.io/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Outfit:wght@500;700&display=swap">
+<style>
+:root{--ink:#1d1c1a;--ink2:#3d3a33;--mut:#6b6455;--line:#e6dfcc;--line2:#cfc6ae;--cream:#FAF7EE;--yel:#FFD23F;--yel-line:#C99100;--yel-tint:#FFF3C4;--yel-line2:#F2DB82;--yel-text:#6b5300;--hope:#FF7A3D;--danger:#B3261E}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:#fff;color:var(--ink);font-family:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic','Hiragino Sans','Yu Gothic',system-ui,sans-serif;line-height:1.5}
+body.lock{overflow:hidden}
+button{font-family:inherit;cursor:pointer;color:inherit}
+button:focus-visible,input:focus-visible,a:focus-visible,select:focus-visible{outline:3px solid #1d1c1a;outline-offset:2px}
+[hidden]{display:none!important}
+.app{max-width:480px;margin:0 auto;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
+
+.top{position:relative;display:flex;align-items:center;justify-content:space-between;height:56px;padding:0 8px 0 12px;border-bottom:1px solid var(--line);background:#fff;z-index:20}
+.back{display:flex;align-items:center;gap:4px;min-height:44px;color:var(--ink2);text-decoration:none;font-size:14px;font-weight:500}
+.top-r{display:flex;align-items:center}
+.lang{position:relative}
+.lang-btn{display:flex;align-items:center;gap:5px;height:44px;padding:0 8px;background:none;border:0;border-radius:10px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;color:var(--ink2)}
+.lang-btn[aria-expanded="true"]{background:var(--yel-tint);outline:1px solid var(--yel-line);outline-offset:-1px}
+.pop{position:absolute;right:0;top:calc(100% + 4px);min-width:176px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 12px 28px -8px rgba(0,0,0,.28);padding:6px;z-index:40}
+.pop button{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-height:48px;padding:0 12px;background:none;border:0;border-radius:10px;font-size:14.5px;font-weight:500;text-align:left}
+.pop button[aria-selected="true"]{background:var(--yel-tint);font-weight:700}
+.pop button.danger{color:var(--danger)}
+.pop hr{border:0;border-top:1px solid var(--line);margin:4px 6px}
+.help{width:44px;height:44px;background:none;border:0;display:flex;align-items:center;justify-content:center}
+.help span{width:24px;height:24px;border:1.5px solid var(--ink2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;color:var(--ink2)}
+
+.body{flex:1;display:flex;flex-direction:column;gap:12px;padding:16px 14px 14px}
+h1{margin:0;font-size:24px;font-weight:700;line-height:1.3;letter-spacing:-.01em}
+.sub{margin:4px 0 0;font-size:13.5px;font-weight:500;line-height:1.5;color:var(--ink2)}
+.use{margin:2px 0 0;font-size:12.5px;line-height:1.5;color:var(--mut)}
+.concert{display:flex;align-items:center;gap:10px;height:48px;padding:0 14px;background:#fff;border:1px solid var(--line);border-radius:12px;cursor:text}
+.concert:focus-within{border-color:var(--yel-line);box-shadow:0 0 0 2px var(--yel-tint)}
+.concert .lbl{flex-shrink:0;font-size:12px;color:var(--mut)}
+.concert input{flex:1;min-width:0;height:44px;border:0;outline:0;background:none;font:inherit;font-size:14px;font-weight:700;color:var(--ink);text-overflow:ellipsis}
+.concert input::placeholder{font-weight:400;color:#8f8878}
+.concert svg{flex-shrink:0}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.rtab{min-width:72px;max-width:180px;height:44px;padding:0 20px;font-size:14px;font-weight:500;background:var(--cream);color:var(--ink2);border:1px solid var(--line);border-radius:999px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rtab[aria-pressed="true"]{font-weight:700;background:var(--yel);color:var(--ink);border:1.5px solid var(--yel-line)}
+.rtab.add{min-width:44px;width:44px;padding:0;font-size:20px;line-height:1;background:transparent;color:var(--mut);border:1px dashed var(--line2)}
+.card{background:var(--cream);border:1px solid var(--line);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:10px;position:relative}
+.card h2{margin:0;font-size:15px;font-weight:700}
+.mhead{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mhead .l{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0}
+.mhead h2{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip{font-size:12px;font-weight:700;color:var(--yel-text);background:var(--yel-tint);border:1px solid var(--yel-line2);border-radius:999px;padding:3px 10px}
+.mhead .r{display:flex;gap:6px;flex-shrink:0;position:relative}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:44px;padding:0 14px;font-size:14px;font-weight:700;border-radius:12px;border:1px solid var(--line2);background:#fff;color:var(--ink2)}
+.btn.y{background:var(--yel);color:var(--ink);border:1.5px solid var(--yel-line)}
+.btn.sq{width:44px;padding:0}
+.btn.w{background:#fff}
+.btn.big{height:48px;border-radius:14px;font-size:15px;width:100%}
+.btn.ghost{background:transparent;border:1px dashed var(--line2);font-weight:500;color:var(--mut)}
+.btn.danger{background:#fff;color:var(--danger);border-color:#e5b6b2}
+.stage{height:26px;border-radius:0 0 40px 40px;background:var(--yel-tint);border-bottom:2px solid #E0A800;box-shadow:0 6px 14px -8px rgba(255,210,63,.8);color:var(--yel-text);text-align:center;font-family:'Outfit',sans-serif;font-size:11px;font-weight:700;letter-spacing:.3em;line-height:24px}
+.mapwrap{background:#fff;border-radius:10px;padding:0 0 8px;position:relative}
+#vp{cursor:grab;position:relative;height:200px;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;border-radius:10px}
+#pz{position:absolute;left:0;top:0;transform-origin:0 0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px;width:max-content;will-change:transform}
+.srow{display:flex;gap:3px;align-items:center;justify-content:center}
+.seat{width:22px;height:22px;flex-shrink:0;border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-size:10px;font-weight:500;color:var(--mut);background:var(--cream);border:1px solid var(--line2);user-select:none;-webkit-user-select:none}
+.seat.on{color:var(--ink);border-color:rgba(29,28,26,.35)}
+.seat.hope{color:var(--ink);border-color:var(--hope);background:repeating-linear-gradient(45deg,var(--hope) 0 2px,#fff 2px 4px)}
+.rlabel{min-width:22px;height:22px;padding:0 4px;display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-size:10px;font-weight:700;color:var(--mut);white-space:nowrap}
+.sdiv{display:flex;align-items:center;gap:6px;align-self:stretch;margin:3px 0}
+.sdiv i{flex:1;border-top:1px dashed var(--line2)}
+.sdiv span{font-family:'Outfit',sans-serif;font-size:10px;font-weight:700;color:var(--mut)}
+.zoom{position:absolute;right:6px;top:6px;display:flex;flex-direction:column;gap:4px;z-index:2}
+.zoom button{width:36px;height:36px;border-radius:10px;border:1px solid var(--line2);background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;font-size:18px;line-height:1;color:var(--ink2)}
+.entrance{display:block;text-align:right;padding:0 12px;font-size:12px;font-weight:500;color:var(--mut)}
+.note{margin:0;font-size:12px;line-height:1.5;color:var(--mut);text-align:center}
+.ghint{margin:-4px 0 0;font-size:12px;line-height:1.5;color:var(--mut)}
+.groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.gbtn{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 10px;font-size:13.5px;font-weight:500;color:var(--ink);background:var(--cream);border:1px solid var(--line);border-radius:12px;text-align:left}
+.gbtn[aria-pressed="true"]{background:var(--yel-tint);border-color:var(--yel-line)}
+.gbtn .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.gbtn .ct{font-family:'Outfit','Noto Sans KR',sans-serif;font-weight:500;color:var(--mut);flex-shrink:0}
+.gbtn .dot{flex-shrink:0;width:14px;height:14px;border-radius:50%;border:1px solid rgba(29,28,26,.3)}
+.gbtn.hope{grid-column:span 2;background:#fff;border:1px dashed var(--hope)}
+.gbtn.hope[aria-pressed="true"]{background:#FFF1E8;border-style:solid}
+.gbtn.hope .dot{background:repeating-linear-gradient(45deg,var(--hope) 0 2px,#fff 2px 4px);border-color:var(--hope)}
+.row2{display:flex;gap:8px}
+.row2 .btn{flex:1;font-weight:500}
+.tchips{display:flex;gap:6px}
+.tchip{flex:1;height:44px;font-size:13.5px;font-weight:500;background:#fff;color:var(--ink2);border:1px solid var(--line);border-radius:999px}
+.tchip[aria-pressed="true"]{font-weight:700;background:var(--yel);color:var(--ink);border:1.5px solid var(--yel-line)}
+.inc-l{margin:0;font-size:12px;color:var(--mut)}
+.inc{display:flex;flex-wrap:wrap;gap:6px}
+.gchip{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 12px;font-size:12.5px;font-weight:500;background:#fff;color:var(--ink2);border:1px solid var(--line);border-radius:999px}
+.gchip[aria-pressed="true"]{background:var(--yel-tint);border-color:var(--yel-line);font-weight:700}
+.gchip .dot{width:10px;height:10px;border-radius:50%;border:1px solid rgba(29,28,26,.3)}
+.preview{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;font-size:12.5px;line-height:1.7;color:var(--ink2);white-space:pre-wrap;word-break:break-word;user-select:text;-webkit-user-select:text}
+.pcount{margin:-4px 2px 0;font-size:11.5px;color:var(--mut);text-align:right}
+.pcount.over{color:var(--danger);font-weight:700}
+.check{display:flex;align-items:center;gap:10px;min-height:44px;font-size:14px;color:var(--ink2);cursor:pointer}
+.check input{width:20px;height:20px;margin:0;accent-color:var(--yel-line)}
+
+.lumi-ft{--ft:#6b6455;margin-top:auto;padding:22px 18px 26px;text-align:center;font-size:12px;line-height:1.7;color:var(--ft)}
+.lumi-ft a{color:inherit;font-weight:400;text-decoration:underline;text-decoration-color:color-mix(in srgb,currentColor 45%,transparent);text-underline-offset:3px}
+
+.ov{position:fixed;inset:0;z-index:100;background:rgba(29,28,26,.5);display:flex;align-items:center;justify-content:center;padding:20px}
+.dlg{width:100%;max-width:360px;max-height:calc(100vh - 40px);max-height:calc(100dvh - 40px);overflow:auto;background:#fff;border-radius:20px;padding:12px 18px 18px;box-shadow:0 14px 34px -8px rgba(0,0,0,.4);display:flex;flex-direction:column;gap:12px}
+.dlg.wide{max-width:420px}
+.dh{display:flex;align-items:center;justify-content:space-between}
+.dh h2{margin:0;font-size:18px;font-weight:700}
+.x{width:44px;height:44px;margin-right:-10px;background:none;border:0;color:var(--ink2);display:flex;align-items:center;justify-content:center}
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.steps li{display:flex;gap:12px;align-items:flex-start}
+.steps .n{flex-shrink:0;width:26px;height:26px;border-radius:50%;background:var(--yel);border:1.5px solid var(--yel-line);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700}
+.steps b{display:block;font-size:14.5px;line-height:1.4}
+.steps span.d{white-space:pre-line;word-break:keep-all;display:block;margin-top:2px;font-size:12.5px;line-height:1.5;color:var(--mut)}
+.gfoot{border-top:1px solid var(--line);padding-top:4px;display:flex;flex-direction:column;gap:2px}
+.fld{display:flex;flex-direction:column;gap:6px}
+.fld label,.fld .l{font-size:12.5px;font-weight:700;color:var(--ink2)}
+.fld input[type=text],.fld input[type=number]{height:44px;padding:0 12px;border:1px solid var(--line2);border-radius:10px;font:inherit;font-size:15px;background:#fff;color:var(--ink)}
+.fld .hint{font-size:12px;color:var(--mut)}
+.sw{display:flex;flex-wrap:wrap;gap:8px}
+.sw button{width:40px;height:40px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px rgba(29,28,26,.3)}
+.sw button[aria-checked="true"]{box-shadow:0 0 0 3px var(--ink)}
+.dact{display:flex;gap:8px}
+.dact .btn{flex:1}
+.lrow{border:1px solid var(--line);background:var(--cream);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:8px}
+.lrow .f{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.lrow .f label{display:flex;flex-direction:column;gap:4px;font-size:11.5px;color:var(--mut)}
+.lrow input{width:100%;height:40px;padding:0 8px;border:1px solid var(--line2);border-radius:8px;font:inherit;font-size:14px;background:#fff}
+.lrow .acts{display:flex;gap:6px;justify-content:flex-end}
+.lrow .acts button{width:44px;height:36px;border:1px solid var(--line2);border-radius:8px;background:#fff;font-size:14px}
+.lrow.div .f{grid-template-columns:1fr}
+.presets{display:flex;gap:6px;flex-wrap:wrap}
+.presets .btn{height:40px;font-weight:500;font-size:13px;padding:0 12px}
+.imgov{flex-direction:column;gap:12px}
+.imgov img{max-width:100%;max-height:calc(100dvh - 160px);border-radius:12px;background:#fff}
+.imgov p{margin:0;color:#fff;font-size:14px;font-weight:700;text-align:center}
+
+#bubble{position:fixed;z-index:300;background:var(--ink);color:#fff;font-size:13px;font-weight:500;padding:8px 12px;border-radius:10px;transform:translateX(-50%);opacity:0;pointer-events:none;transition:opacity .15s;white-space:nowrap;max-width:calc(100vw - 16px)}
+#bubble::after{content:"";position:absolute;left:calc(50% + var(--ax,0px));bottom:-5px;width:10px;height:10px;background:var(--ink);transform:translateX(-50%) rotate(45deg)}
+#bubble.below::after{bottom:auto;top:-5px}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+<header class="top">
+  <a class="back" href="https://lumimori38.github.io/" data-i18n-aria="backAria">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+    루미 오락실
+  </a>
+  <div class="top-r">
+    <div class="lang">
+      <button type="button" class="lang-btn" id="langBtn" aria-haspopup="listbox" aria-expanded="false" data-i18n-aria="langAria">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg>
+        <span id="langCode">KO</span>
+      </button>
+      <div class="pop" id="langMenu" role="listbox" hidden>
+        <button type="button" role="option" data-lang="ko">한국어</button>
+        <button type="button" role="option" data-lang="en">English</button>
+        <button type="button" role="option" data-lang="ja">日本語</button>
+      </div>
+    </div>
+    <button type="button" class="help" id="helpBtn" data-i18n-aria="help"><span>?</span></button>
+  </div>
+</header>
+
+<main class="body">
+  <div>
+    <h1 data-i18n="title">티켓팅 좌석 매니저</h1>
+    <p class="sub" data-i18n="sub"></p>
+    <p class="use" data-i18n="use"></p>
+  </div>
+
+  <label class="concert">
+    <span class="lbl" data-i18n="concertLabel"></span>
+    <input type="text" id="concertInput" maxlength="40" autocomplete="off" data-i18n-ph="concertPh" data-i18n-aria="concertAria">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b6455" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>
+  </label>
+
+  <div class="tabs" id="tabs"></div>
+
+  <section class="card" aria-labelledby="mapTitle">
+    <div class="mhead">
+      <div class="l">
+        <h2 id="mapTitle"></h2>
+        <span class="chip" id="heldChip"></span>
+      </div>
+      <div class="r">
+        <button type="button" class="btn y" id="saveBtn" data-i18n-aria="saveAria">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>
+          <span id="saveLbl" data-i18n="save"></span>
+        </button>
+        <button type="button" class="btn w sq" id="moreBtn" aria-haspopup="menu" aria-expanded="false" data-i18n-aria="moreAria">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+        </button>
+        <div class="pop" id="moreMenu" role="menu" hidden>
+          <button type="button" role="menuitem" data-act="rename" data-i18n="mRename"></button>
+          <button type="button" role="menuitem" data-act="copy" data-i18n="mCopy"></button>
+          <button type="button" role="menuitem" data-act="layout" data-i18n="mLayout"></button>
+          <hr>
+          <button type="button" role="menuitem" class="danger" data-act="reset" data-i18n="mReset"></button>
+          <button type="button" role="menuitem" class="danger" data-act="delete" id="mDelete" data-i18n="mDelete"></button>
+        </div>
+      </div>
+    </div>
+    <div class="stage" aria-hidden="true">STAGE</div>
+    <div class="mapwrap">
+      <div id="vp" role="img" data-i18n-aria="mapAria">
+        <div id="pz"></div>
+        <div class="zoom">
+          <button type="button" id="zIn" data-i18n-aria="zoomIn">+</button>
+          <button type="button" id="zOut" data-i18n-aria="zoomOut">−</button>
+          <button type="button" id="zFit" data-i18n-aria="zoomFit"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+        </div>
+      </div>
+      <span class="entrance" data-i18n="entrance"></span>
+    </div>
+    <p class="note" data-i18n="autosave"></p>
+  </section>
+
+  <section class="card" aria-labelledby="gTitle">
+    <h2 id="gTitle" data-i18n="groupsTitle"></h2>
+    <p class="ghint" data-i18n="groupHint"></p>
+    <div class="groups" id="groups"></div>
+    <div class="row2">
+      <button type="button" class="btn ghost" id="newGroup" data-i18n="newGroup"></button>
+    </div>
+  </section>
+
+  <section class="card" aria-labelledby="tTitle">
+    <h2 id="tTitle" data-i18n="tradeTitle"></h2>
+    <div class="tchips" id="tchips">
+      <button type="button" class="tchip" data-type="swap" data-i18n="tSwap"></button>
+      <button type="button" class="tchip" data-type="transfer" data-i18n="tTransfer"></button>
+      <button type="button" class="tchip" data-type="want" data-i18n="tWant"></button>
+    </div>
+    <div id="incWrap">
+      <p class="inc-l" data-i18n="incLabel"></p>
+      <div class="inc" id="inc"></div>
+    </div>
+    <div class="preview" id="preview" tabindex="0" aria-live="polite"></div>
+    <p class="pcount" id="pcount"></p>
+    <label class="check"><input type="checkbox" id="tagChk"><span data-i18n="withTag"></span></label>
+    <button type="button" class="btn y big" id="copyBtn"><span id="copyLbl" data-i18n="copyBtn"></span></button>
+  </section>
+</main>
+
+<footer class="lumi-ft">
+  쓸데없이 진심인 B급 콘텐츠<br>
+  티켓팅 좌석 매니저 × <a href="https://lumimori38.github.io/">©루미 오락실</a> · lumimori38
+</footer>
+</div>
+
+<div class="ov" id="mGuide" hidden>
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="guideH">
+    <div class="dh"><h2 id="guideH" data-i18n="guideTitle"></h2><button type="button" class="x" data-close data-i18n-aria="close"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <ol class="steps">
+      <li><span class="n">1</span><div><b data-i18n="g1t"></b><span class="d" data-i18n="g1d"></span></div></li>
+      <li><span class="n">2</span><div><b data-i18n="g2t"></b><span class="d" data-i18n="g2d"></span></div></li>
+      <li><span class="n">3</span><div><b data-i18n="gmt"></b><span class="d" data-i18n="gmd"></span></div></li>
+      <li><span class="n">4</span><div><b data-i18n="g3t"></b><span class="d" data-i18n="g3d"></span></div></li>
+      <li><span class="n">5</span><div><b data-i18n="g4t"></b><span class="d" data-i18n="g4d"></span></div></li>
+    </ol>
+    <div class="gfoot">
+      <label class="check"><input type="checkbox" id="guideHide"><span data-i18n="dontShow"></span></label>
+      <button type="button" class="btn y big" data-close data-i18n="start"></button>
+      <p class="note" style="margin-top:8px" data-i18n="guideNote"></p>
+    </div>
+  </div>
+</div>
+
+<div class="ov" id="mGroup" hidden>
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="gmH">
+    <div class="dh"><h2 id="gmH"></h2><button type="button" class="x" data-close data-i18n-aria="close"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="fld"><label for="gmName" data-i18n="groupName"></label><input type="text" id="gmName" maxlength="12" autocomplete="off"></div>
+    <div class="fld"><span class="l" data-i18n="color"></span><div class="sw" id="gmSw" role="radiogroup"></div></div>
+    <div class="dact">
+      <button type="button" class="btn danger" id="gmDel" data-i18n="delete"></button>
+      <button type="button" class="btn y" id="gmSave" data-i18n="saveBtn"></button>
+    </div>
+  </div>
+</div>
+
+<div class="ov" id="mRound" hidden>
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="rmH">
+    <div class="dh"><h2 id="rmH" data-i18n="roundNameTitle"></h2><button type="button" class="x" data-close data-i18n-aria="close"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="fld"><input type="text" id="rmName" maxlength="16" autocomplete="off" data-i18n-aria="roundNameTitle"><span class="hint" data-i18n="roundNameHint"></span></div>
+    <div class="dact"><button type="button" class="btn y" id="rmSave" data-i18n="saveBtn"></button></div>
+  </div>
+</div>
+
+<div class="ov" id="mConfirm" hidden>
+  <div class="dlg" role="alertdialog" aria-modal="true" aria-labelledby="cfH">
+    <div class="dh"><h2 id="cfH"></h2></div>
+    <p class="note" id="cfBody" style="text-align:left;font-size:13.5px"></p>
+    <div class="dact">
+      <button type="button" class="btn" data-close data-i18n="cancel"></button>
+      <button type="button" class="btn danger" id="cfOk"></button>
+    </div>
+  </div>
+</div>
+
+<div class="ov" id="mLayout" hidden>
+  <div class="dlg wide" role="dialog" aria-modal="true" aria-labelledby="lyH">
+    <div class="dh"><h2 id="lyH" data-i18n="layoutTitle"></h2><button type="button" class="x" data-close data-i18n-aria="close"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <div class="presets" id="presets">
+      <button type="button" class="btn" data-preset="default" data-i18n="pDefault"></button>
+      <button type="button" class="btn" data-preset="small" data-i18n="pSmall"></button>
+      <button type="button" class="btn" data-preset="arena" data-i18n="pArena"></button>
+    </div>
+    <div id="lyRows" style="display:flex;flex-direction:column;gap:8px"></div>
+    <div class="row2">
+      <button type="button" class="btn ghost" id="lyAddRow" data-i18n="addRow"></button>
+      <button type="button" class="btn ghost" id="lyAddDiv" data-i18n="addDivider"></button>
+    </div>
+    <p class="note" style="text-align:left" data-i18n="layoutNote"></p>
+    <div class="dact">
+      <button type="button" class="btn" data-close data-i18n="cancel"></button>
+      <button type="button" class="btn y" id="lyApply" data-i18n="apply"></button>
+    </div>
+  </div>
+</div>
+
+<div class="ov imgov" id="mImg" hidden>
+  <p id="imgMsg" data-i18n="imgTitle"></p>
+  <img id="imgOut" alt="">
+  <button type="button" class="btn big" style="max-width:360px" data-close data-i18n="close"></button>
+</div>
+
+<div id="bubble" role="status" hidden></div>
+
+<script>
+(() => {
+'use strict';
+
+const SITE = 'https://lumimori38.github.io/';
+const SELF = SITE + 'ticketing-seat-manager/';
+const LS_STATE = 'tsm.state.v1', LS_LANG = 'tsm.lang', LS_GUIDE = 'tsm.guideHidden';
+const PALETTE = ['#F5C518', '#F06292', '#38B6FF', '#9575CD', '#4CAF7A', '#FF9F43', '#E57373', '#90A4AE'];
+const HOPE = 'hope';
+const HOPE_COLOR = '#FF7A3D';
+const MAX_GROUPS = 8, MAX_ROUNDS = 8;
+
+const $ = id => document.getElementById(id);
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+const uid = () => Math.random().toString(36).slice(2, 8);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+  del(k) { try { localStorage.removeItem(k); } catch (e) {} }
+};
+
+const L = {
+  ko: {
+    backAria: '루미 오락실 홈으로', langAria: '언어 선택', help: '이용 방법', close: '닫기',
+    title: '티켓팅 좌석 매니저', sub: '자리 정리부터 교환 문구까지 한 번에', use: '그룹별로 색을 정해 칠해 보세요',
+    concertLabel: '공연명', concertPh: '예: 2026 WORLD TOUR IN SEOUL', concertAria: '공연명 입력',
+    roundAuto: n => `${n}부`, addRound: '회차 추가', mapTitle: '좌석 배치도',
+    held: n => `잡은 좌석 ${n}석`, save: '저장', saved: '저장했어요!', saveAria: '배치도 이미지 저장하기', moreAria: '더보기: 회차 이름 변경, 회차 복사, 좌석 배열 설정, 초기화, 회차 삭제',
+    mRename: '회차 이름 변경', mCopy: '회차 복사', mLayout: '좌석 배열 설정', mReset: '초기화', mDelete: '회차 삭제',
+    mapAria: '좌석 배치도', zoomIn: '확대', zoomOut: '축소', zoomFit: '화면에 맞추기', entrance: '입구 ↑',
+    autosave: '자동 저장돼요 · 이 기기에만 저장돼요',
+    groupsTitle: '그룹 선택', groupHint: '선택한 그룹을 한 번 더 누르면 이름·색을 바꿀 수 있어요', groupWord: '그룹',
+    hope: '교환 희망 자리', seatsN: n => `${n}석`, newGroup: '+ 새 그룹', maxGroups: '그룹은 최대 8개예요',
+    tradeTitle: '교환 문구', tSwap: '맞교환', tTransfer: '원가양도', tWant: '구함',
+    incLabel: '보유 좌석에 넣을 그룹', withTag: '루미 오락실 태그·링크 넣기', copyBtn: '문구 복사하기', copied: '복사 완료!', copyToast: '문구가 복사됐어요!',
+    copyFail: '복사하지 못했어요. 문구를 길게 눌러 복사해 주세요', noSeats: '(선택한 좌석 없음)',
+    guideTitle: '이용 방법',
+    g1t: '공연명 입력하기', g1d: '입력한 공연명이 저장 이미지와 교환 문구에 그대로 들어가요',
+    g2t: '그룹 고르고 좌석 칠하기', g2d: '그룹을 고른 뒤 좌석을 탭하면 칠해지고,\n다시 탭하면 지워져요',
+    gmt: '배치도 움직이기', gmd: '드래그로 이동하고,\n두 손가락으로 확대·축소해요',
+    g3t: '교환 희망 자리 표시하기', g3d: "받고 싶은 자리는\n'교환 희망 자리' 그룹으로 칠하세요",
+    g4t: '저장하고 문구 복사하기', g4d: '배치도를 이미지로 저장하고,\n교환 문구를 복사해 올려요',
+    dontShow: '다시 보지 않기', start: '시작하기', guideNote: '상단 ? 버튼으로 언제든 다시 볼 수 있어요',
+    cancel: '취소', delete: '삭제', saveBtn: '저장', apply: '적용',
+    gNew: '새 그룹 만들기', gEdit: '그룹 편집', groupName: '그룹 이름', color: '색상',
+    roundNameTitle: '회차 이름', roundNameHint: '비우면 기본 이름으로 돌아가요',
+    resetTitle: '이 회차를 초기화할까요?', resetBody: '칠한 좌석이 모두 지워져요', resetOk: '초기화',
+    delRoundTitle: '이 회차를 삭제할까요?', delRoundBody: '삭제하면 되돌릴 수 없어요',
+    delGroupTitle: '이 그룹을 삭제할까요?', delGroupBody: '이 그룹으로 칠한 좌석이 모든 회차에서 지워져요',
+    copySuffix: '복사', maxRounds: '회차는 최대 8개예요',
+    layoutTitle: '좌석 배열 설정', pDefault: '기본 콘서트홀', pSmall: '소극장·팬미팅', pArena: '아레나',
+    rowLabel: '행 이름', seatCount: '좌석 수', aisle: '통로(번 뒤)', dividerLabel: '구분선 이름',
+    addRow: '+ 행 추가', addDivider: '+ 구분선 추가', layoutNote: '좌석 수를 줄이면 칠한 좌석이 일부 사라질 수 있어요',
+    up: '위로', down: '아래로', remove: '행 삭제', riser: '단차석',
+    imgTitle: '이미지를 꾹 눌러 저장하세요', imgLegendNone: ''
+  },
+  en: {
+    backAria: 'Back to Lumi Arcade home', langAria: 'Language', help: 'How to use', close: 'Close',
+    title: 'Ticketing Seat Manager', sub: 'Map your seats & write trade posts in one place', use: 'Pick a color for each group and start painting',
+    concertLabel: 'Concert', concertPh: 'e.g. 2026 WORLD TOUR IN SEOUL', concertAria: 'Concert name',
+    roundAuto: n => `Show ${n}`, addRound: 'Add show', mapTitle: 'Seat Map',
+    held: n => `${n} seats held`, save: 'Save', saved: 'Saved!', saveAria: 'Save seat map as image', moreAria: 'More: rename show, duplicate show, edit seat layout, reset, delete show',
+    mRename: 'Rename show', mCopy: 'Duplicate show', mLayout: 'Edit seat layout', mReset: 'Reset', mDelete: 'Delete show',
+    mapAria: 'Seat map', zoomIn: 'Zoom in', zoomOut: 'Zoom out', zoomFit: 'Fit to screen', entrance: 'Entrance ↑',
+    autosave: 'Auto-saved · stays on this device only',
+    groupsTitle: 'Groups', groupHint: 'Tap a selected group again to edit its name & color', groupWord: 'Group',
+    hope: 'Wanted seats', seatsN: n => `${n}`, newGroup: '+ New group', maxGroups: 'Up to 8 groups',
+    tradeTitle: 'Trade Post', tSwap: 'Swap', tTransfer: 'Face value', tWant: 'Wanted',
+    incLabel: 'Groups to include as "have"', withTag: 'Add hashtags & link', copyBtn: 'Copy post', copied: 'Copied!', copyToast: 'Post copied!',
+    copyFail: "Couldn't copy. Please press and hold the text to copy it", noSeats: '(no seats yet)',
+    guideTitle: 'How to use',
+    g1t: 'Enter the concert name', g1d: 'It appears in your saved image and trade post',
+    g2t: 'Pick a group & paint seats', g2d: 'Choose a group, then tap seats to paint.\nTap again to clear',
+    gmt: 'Move around the map', gmd: 'Drag to move,\npinch to zoom in and out',
+    g3t: 'Mark wanted seats', g3d: 'Paint seats you want with the "Wanted seats" group',
+    g4t: 'Save & copy your post', g4d: 'Save the map as an image and copy the trade post',
+    dontShow: "Don't show again", start: 'Get started', guideNote: 'You can reopen this anytime with the ? button',
+    cancel: 'Cancel', delete: 'Delete', saveBtn: 'Save', apply: 'Apply',
+    gNew: 'New group', gEdit: 'Edit group', groupName: 'Group name', color: 'Color',
+    roundNameTitle: 'Show name', roundNameHint: 'Leave blank to use the default name',
+    resetTitle: 'Reset this show?', resetBody: 'All painted seats will be cleared', resetOk: 'Reset',
+    delRoundTitle: 'Delete this show?', delRoundBody: "This can't be undone",
+    delGroupTitle: 'Delete this group?', delGroupBody: 'Seats painted with it will be cleared in every show',
+    copySuffix: 'copy', maxRounds: 'Up to 8 shows',
+    layoutTitle: 'Seat layout', pDefault: 'Concert hall', pSmall: 'Small hall', pArena: 'Arena',
+    rowLabel: 'Row', seatCount: 'Seats', aisle: 'Aisle after #', dividerLabel: 'Divider label',
+    addRow: '+ Add row', addDivider: '+ Add divider', layoutNote: 'Reducing the seat count may clear some painted seats',
+    up: 'Move up', down: 'Move down', remove: 'Delete row', riser: 'Riser',
+    imgTitle: 'Press and hold the image to save', imgLegendNone: ''
+  },
+  ja: {
+    backAria: 'ルミ・アーケードのホームへ', langAria: '言語', help: '使い方', close: '閉じる',
+    title: 'チケット座席マネージャー', sub: '座席の整理から交換文まで、これ一つで', use: 'グループごとに色を決めて塗ってみよう',
+    concertLabel: '公演名', concertPh: '例：2026 WORLD TOUR IN SEOUL', concertAria: '公演名を入力',
+    roundAuto: n => `${n}部`, addRound: '公演回を追加', mapTitle: '座席配置図',
+    held: n => `確保 ${n}席`, save: '保存', saved: '保存しました！', saveAria: '配置図を画像で保存', moreAria: 'その他：名前変更、コピー、座席配置の設定、リセット、削除',
+    mRename: '公演回の名前を変更', mCopy: '公演回をコピー', mLayout: '座席配置を設定', mReset: 'リセット', mDelete: '公演回を削除',
+    mapAria: '座席配置図', zoomIn: '拡大', zoomOut: '縮小', zoomFit: '全体表示', entrance: '入口 ↑',
+    autosave: '自動保存・この端末にのみ保存されます',
+    groupsTitle: 'グループ', groupHint: '選択中のグループをもう一度タップすると名前・色を変更できます', groupWord: 'グループ',
+    hope: '交換希望の席', seatsN: n => `${n}席`, newGroup: '+ 新規グループ', maxGroups: 'グループは最大8個です',
+    tradeTitle: '交換文', tSwap: '交換', tTransfer: '定価譲渡', tWant: '求',
+    incLabel: '「譲」に入れるグループ', withTag: 'ハッシュタグとリンクを入れる', copyBtn: '文をコピー', copied: 'コピー完了！', copyToast: 'コピーしました！',
+    copyFail: 'コピーできませんでした。文章を長押ししてコピーしてください', noSeats: '(未選択)',
+    guideTitle: '使い方',
+    g1t: '公演名を入力', g1d: '保存画像と交換文にそのまま入ります',
+    g2t: 'グループを選んで座席を塗る', g2d: 'グループを選んで座席をタップで塗り、\nもう一度タップで消去',
+    gmt: '配置図を動かす', gmd: 'ドラッグで移動、\n2本指で拡大・縮小',
+    g3t: '交換希望の席を表示', g3d: '欲しい席は\n「交換希望の席」で塗りましょう',
+    g4t: '保存して文をコピー', g4d: '配置図を画像で保存し、\n交換文をコピーして投稿しよう',
+    dontShow: '次回から表示しない', start: 'はじめる', guideNote: '右上の?ボタンでいつでも見られます',
+    cancel: 'キャンセル', delete: '削除', saveBtn: '保存', apply: '適用',
+    gNew: '新規グループ', gEdit: 'グループを編集', groupName: 'グループ名', color: '色',
+    roundNameTitle: '公演回の名前', roundNameHint: '空欄にすると初期の名前に戻ります',
+    resetTitle: 'この公演回をリセットしますか？', resetBody: '塗った座席がすべて消えます', resetOk: 'リセット',
+    delRoundTitle: 'この公演回を削除しますか？', delRoundBody: '元に戻せません',
+    delGroupTitle: 'このグループを削除しますか？', delGroupBody: 'このグループで塗った座席がすべての公演回から消えます',
+    copySuffix: 'コピー', maxRounds: '公演回は最大8個です',
+    layoutTitle: '座席配置の設定', pDefault: 'コンサートホール', pSmall: '小劇場・ファンミ', pArena: 'アリーナ',
+    rowLabel: '行名', seatCount: '席数', aisle: '通路(番の後)', dividerLabel: '区切りの名前',
+    addRow: '+ 行を追加', addDivider: '+ 区切りを追加', layoutNote: '席数を減らすと塗った座席が消えることがあります',
+    up: '上へ', down: '下へ', remove: '行を削除', riser: '段差席',
+    imgTitle: '画像を長押しして保存してください', imgLegendNone: ''
+  }
+};
+const RANGE = { ko: '~', en: '-', ja: '〜' }, SUFFIX = { ko: '번', en: '', ja: '' }, JOIN = { ko: ', ', en: ', ', ja: '、' };
+const TT = {
+  ko: {
+    swap: (h, hv, w) => `[맞교환] ${h}\n보유: ${hv}\n희망: ${w}\nDM 주세요! RT 부탁드려요`,
+    transfer: (h, hv) => `[원가양도] ${h}\n좌석: ${hv}\n원가 그대로 양도해요. DM 주세요!`,
+    want: (h, hv, w) => `[구함] ${h}\n희망: ${w}\nDM 주세요! RT 부탁드려요`
+  },
+  en: {
+    swap: (h, hv, w) => `[SWAP] ${h}\nHave: ${hv}\nWant: ${w}\nDM me! RTs appreciated`,
+    transfer: (h, hv) => `[FACE VALUE] ${h}\nSeats: ${hv}\nSelling at face value. DM me!`,
+    want: (h, hv, w) => `[WANTED] ${h}\nLooking for: ${w}\nDM me! RTs appreciated`
+  },
+  ja: {
+    swap: (h, hv, w) => `【座席交換】${h}\n譲：${hv}\n求：${w}\nDMお待ちしてます！拡散RTお願いします`,
+    transfer: (h, hv) => `【定価譲渡】${h}\n座席：${hv}\n定価でお譲りします。DMください！`,
+    want: (h, hv, w) => `【求】${h}\n希望：${w}\nDMお待ちしてます！拡散RTお願いします`
+  }
+};
+
+let lang = 'ko';
+const t = (k, ...a) => { const v = (L[lang] && L[lang][k] != null) ? L[lang][k] : L.ko[k]; return typeof v === 'function' ? v(...a) : v; };
+
+const rowDef = (label, count, aisle = 0) => ({ id: uid(), kind: 'row', label, count, aisle });
+const divDef = label => ({ id: uid(), kind: 'div', label });
+function presetLayout(name) {
+  if (name === 'small') return [rowDef('1', 12), rowDef('2', 12), rowDef('3', 12), rowDef('4', 12), divDef(t('riser')), rowDef('5', 14)];
+  if (name === 'arena') return [rowDef('A', 16, 8), rowDef('B', 16, 8), rowDef('C', 16, 8), divDef('1F'), rowDef('101', 14), rowDef('102', 14)];
+  return [rowDef('A', 18, 9), rowDef('B', 18, 9), rowDef('C', 17, 9), rowDef('D', 13, 5), rowDef('E', 10), divDef('2F'), rowDef('F', 12), rowDef('G', 13)];
+}
+function freshState() {
+  return {
+    v: 1, concert: '', layout: presetLayout('default'),
+    groups: [1, 2, 3, 4].map(n => ({ id: 'g' + n, n, name: null, color: PALETTE[n - 1] })), nextN: 5,
+    rounds: [{ id: uid(), name: null, seats: {} }, { id: uid(), name: null, seats: {} }], cur: 0,
+    brush: 'g1', erase: false, tool: 'paint', trade: 'swap', inc: null, tag: true
+  };
+}
+function loadState() {
+  const raw = store.get(LS_STATE);
+  if (!raw) return freshState();
+  try {
+    const s = JSON.parse(raw), f = freshState();
+    if (!s || s.v !== 1 || !Array.isArray(s.layout) || !s.layout.length || !Array.isArray(s.groups) || !s.groups.length || !Array.isArray(s.rounds) || !s.rounds.length) return f;
+    s.concert = typeof s.concert === 'string' ? s.concert.slice(0, 40) : '';
+    s.cur = clamp(s.cur | 0, 0, s.rounds.length - 1);
+    if (s.brush !== HOPE && !s.groups.some(g => g.id === s.brush)) s.brush = s.groups[0].id;
+    s.trade = ['swap', 'transfer', 'want'].includes(s.trade) ? s.trade : 'swap';
+    s.tag = s.tag !== false; s.nextN = s.nextN || (s.groups.length + 1);
+    s.rounds.forEach(r => { r.seats = r.seats || {}; });
+    return s;
+  } catch (e) { return freshState(); }
+}
+let S = loadState();
+let saveTimer = null;
+const save = () => { clearTimeout(saveTimer); saveTimer = setTimeout(() => store.set(LS_STATE, JSON.stringify(S)), 250); };
+const cur = () => S.rounds[S.cur];
+const gName = g => g.name || `${t('groupWord')} ${g.n}`;
+const rName = i => S.rounds[i].name || t('roundAuto', i + 1);
+const findGroup = id => S.groups.find(g => g.id === id);
+
+let bubbleTimer = null;
+function bubble(anchor, text) {
+  const b = $('bubble');
+  b.textContent = text; b.hidden = false; b.style.opacity = 0; b.classList.remove('below');
+  requestAnimationFrame(() => {
+    const r = anchor.getBoundingClientRect(), bw = b.offsetWidth, bh = b.offsetHeight;
+    const cx = r.left + r.width / 2;
+    const left = clamp(cx, bw / 2 + 8, innerWidth - bw / 2 - 8);
+    let top = r.top - bh - 10, below = false;
+    if (top < 8) { top = r.bottom + 10; below = true; }
+    b.style.left = left + 'px'; b.style.top = top + 'px';
+    b.style.setProperty('--ax', clamp(cx - left, -bw / 2 + 14, bw / 2 - 14) + 'px');
+    b.classList.toggle('below', below); b.style.opacity = 1;
+  });
+  clearTimeout(bubbleTimer);
+  bubbleTimer = setTimeout(() => { b.style.opacity = 0; setTimeout(() => { b.hidden = true; }, 180); }, 2000);
+}
+function flash(span, key) {
+  span.textContent = t(key);
+  clearTimeout(span._t);
+  span._t = setTimeout(() => { span.textContent = t(span.dataset.i18n); }, 1500);
+}
+
+function applyI18n() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach(n => { n.textContent = t(n.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-aria]').forEach(n => n.setAttribute('aria-label', t(n.dataset.i18nAria)));
+  document.querySelectorAll('[data-i18n-ph]').forEach(n => n.setAttribute('placeholder', t(n.dataset.i18nPh)));
+  $('langCode').textContent = lang.toUpperCase();
+  document.querySelectorAll('#langMenu [data-lang]').forEach(b => b.setAttribute('aria-selected', b.dataset.lang === lang ? 'true' : 'false'));
+  document.querySelectorAll('#langMenu [data-lang]').forEach(b => {
+    const mark = b.querySelector('svg'); if (mark) mark.remove();
+    if (b.dataset.lang === lang) b.insertAdjacentHTML('beforeend', '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b5300" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>');
+  });
+}
+function setLang(l) {
+  lang = L[l] ? l : 'ko'; store.set(LS_LANG, lang);
+  applyI18n(); renderAll();
+}
+
+function renderTabs() {
+  const box = $('tabs'); box.textContent = '';
+  S.rounds.forEach((r, i) => {
+    const b = el('button', 'rtab', rName(i));
+    b.type = 'button'; b.setAttribute('aria-pressed', i === S.cur ? 'true' : 'false');
+    b.addEventListener('click', () => { S.cur = i; save(); renderAll(); });
+    box.append(b);
+  });
+  const add = el('button', 'rtab add', '+'); add.type = 'button'; add.setAttribute('aria-label', t('addRound'));
+  add.addEventListener('click', () => {
+    if (S.rounds.length >= MAX_ROUNDS) { bubble(add, t('maxRounds')); return; }
+    S.rounds.push({ id: uid(), name: null, seats: {} }); S.cur = S.rounds.length - 1; save(); renderAll();
+  });
+  box.append(add);
+}
+function paintEl(s, val) {
+  s.className = 'seat'; s.style.background = ''; s.style.boxShadow = '';
+  if (!val) return;
+  if (val === HOPE) { s.classList.add('hope'); return; }
+  const g = findGroup(val); if (!g) return;
+  s.classList.add('on'); s.style.background = g.color; s.style.boxShadow = '0 1px 4px ' + g.color + 'aa';
+}
+function buildGrid() {
+  const pz = $('pz'); pz.textContent = '';
+  const seats = cur().seats;
+  S.layout.forEach(r => {
+    if (r.kind === 'div') {
+      const d = el('div', 'sdiv'); d.append(el('i'), el('span', '', r.label), el('i')); pz.append(d); return;
+    }
+    const row = el('div', 'srow');
+    const mk = n => { const s = el('div', 'seat', String(n)); s.dataset.k = r.id + ':' + n; paintEl(s, seats[s.dataset.k]); return s; };
+    const lab = () => row.append(el('div', 'rlabel', r.label));
+    if (r.aisle > 0 && r.aisle < r.count) {
+      for (let n = 1; n <= r.aisle; n++) row.append(mk(n));
+      lab();
+      for (let n = r.aisle + 1; n <= r.count; n++) row.append(mk(n));
+    } else {
+      lab();
+      for (let n = 1; n <= r.count; n++) row.append(mk(n));
+    }
+    pz.append(row);
+  });
+  fit();
+}
+function counts(round) { const c = {}; Object.values(round.seats).forEach(v => { c[v] = (c[v] || 0) + 1; }); return c; }
+function heldTotal(round) { const c = counts(round); return S.groups.reduce((a, g) => a + (c[g.id] || 0), 0); }
+function renderHead() {
+  $('mapTitle').textContent = `${rName(S.cur)} ${t('mapTitle')}`;
+  $('heldChip').textContent = t('held', heldTotal(cur()));
+  $('mDelete').hidden = S.rounds.length < 2;
+  $('concertInput').value = S.concert;
+  $('tagChk').checked = S.tag;
+}
+function renderGroups() {
+  const box = $('groups'); box.textContent = ''; const c = counts(cur());
+  const mkBtn = (id, name, count, dotColor, cls) => {
+    const b = el('button', 'gbtn' + (cls ? ' ' + cls : '')); b.type = 'button';
+    b.setAttribute('aria-pressed', (S.brush === id) ? 'true' : 'false');
+    const dot = el('span', 'dot'); if (dotColor) dot.style.background = dotColor;
+    b.append(dot, el('span', 'nm', name), el('span', 'ct', t('seatsN', count)));
+    return b;
+  };
+  S.groups.forEach(g => {
+    const b = mkBtn(g.id, gName(g), c[g.id] || 0, g.color);
+    b.addEventListener('click', () => {
+      if (S.brush === g.id) { openGroupModal(g); return; }
+      S.brush = g.id; save(); renderGroups();
+    });
+    box.append(b);
+  });
+  const hb = mkBtn(HOPE, t('hope'), c[HOPE] || 0, null, 'hope');
+  hb.addEventListener('click', () => { S.brush = HOPE; save(); renderGroups(); });
+  box.append(hb);
+}
+function fmtSeats(round, pred) {
+  const out = [];
+  S.layout.forEach(r => {
+    if (r.kind !== 'row') return;
+    const ns = [];
+    for (let n = 1; n <= r.count; n++) { const v = round.seats[r.id + ':' + n]; if (v && pred(v)) ns.push(n); }
+    let i = 0;
+    while (i < ns.length) {
+      let j = i; while (j + 1 < ns.length && ns[j + 1] === ns[j] + 1) j++;
+      out.push(`${r.label} ${i === j ? ns[i] : ns[i] + RANGE[lang] + ns[j]}${SUFFIX[lang]}`);
+      i = j + 1;
+    }
+  });
+  return out.join(JOIN[lang]);
+}
+function tradeText() {
+  const r = cur(), incl = S.inc ? new Set(S.inc) : null;
+  const have = fmtSeats(r, v => v !== HOPE && (!incl || incl.has(v))) || t('noSeats');
+  const want = fmtSeats(r, v => v === HOPE) || t('noSeats');
+  const head = [S.concert.trim(), rName(S.cur)].filter(Boolean).join(lang === 'en' ? ', ' : ' ');
+  let txt = TT[lang][S.trade](head, have, want);
+  if (S.tag) txt += `\n#루미오락실 #티켓팅좌석매니저 #티켓팅\n${SELF}`;
+  return txt;
+}
+function renderTrade() {
+  document.querySelectorAll('.tchip').forEach(b => b.setAttribute('aria-pressed', b.dataset.type === S.trade ? 'true' : 'false'));
+  $('incWrap').hidden = S.trade === 'want';
+  const inc = $('inc'); inc.textContent = '';
+  const set = S.inc ? new Set(S.inc) : new Set(S.groups.map(g => g.id));
+  S.groups.forEach(g => {
+    const b = el('button', 'gchip'); b.type = 'button'; b.setAttribute('aria-pressed', set.has(g.id) ? 'true' : 'false');
+    const d = el('span', 'dot'); d.style.background = g.color; b.append(d, document.createTextNode(gName(g)));
+    b.addEventListener('click', () => {
+      const s2 = new Set(set); s2.has(g.id) ? s2.delete(g.id) : s2.add(g.id);
+      S.inc = s2.size === S.groups.length ? null : [...s2]; save(); renderTrade();
+    });
+    inc.append(b);
+  });
+  const txt = tradeText();
+  $('preview').textContent = txt;
+  const len = [...txt.replace(/https?:\/\/\S+/g, 'x'.repeat(23))].length;
+  const pc = $('pcount'); pc.textContent = `${len} / 280`; pc.classList.toggle('over', len > 280);
+}
+function renderAll() { renderTabs(); renderHead(); buildGrid(); renderGroups(); renderTrade(); }
+function afterPaint() { save(); $('heldChip').textContent = t('held', heldTotal(cur())); renderGroups(); renderTrade(); }
+
+const Z = { s: 1, x: 0, y: 0, min: .2, max: 3.5 };
+const applyZ = () => { $('pz').style.transform = `translate(${Z.x}px,${Z.y}px) scale(${Z.s})`; };
+function fit() {
+  const vp = $('vp'), pz = $('pz'); const vw = vp.clientWidth, cw = pz.offsetWidth, ch = pz.offsetHeight;
+  if (!vw || !cw || !ch) return;
+  const sw = (vw - 12) / cw;
+  const h = clamp(ch * sw + 20, 150, 340);
+  vp.style.height = h + 'px';
+  const s = Math.min(sw, (h - 12) / ch, 1.3);
+  Z.s = s; Z.min = Math.min(.25, s * .7); Z.max = Math.max(3.5, s * 4);
+  Z.x = (vw - cw * s) / 2; Z.y = (h - ch * s) / 2; applyZ();
+}
+function zoomAt(px, py, ns) {
+  ns = clamp(ns, Z.min, Z.max);
+  Z.x = px - (px - Z.x) * (ns / Z.s); Z.y = py - (py - Z.y) * (ns / Z.s); Z.s = ns; applyZ();
+}
+const vp = $('vp'), ptrs = new Map();
+let gest = null, pinch = null, multi = false;
+const rectOf = () => vp.getBoundingClientRect();
+const seatAt = e => { const x = document.elementFromPoint(e.clientX, e.clientY); return x && x.closest ? x.closest('.seat') : null; };
+function tapSeat(el) {
+  const k = el.dataset.k, seats = cur().seats;
+  if (seats[k] === S.brush) delete seats[k]; else seats[k] = S.brush;
+  paintEl(el, seats[k]); afterPaint();
+}
+function startPinch() {
+  const [a, b] = [...ptrs.values()], r = rectOf();
+  pinch = { d: Math.hypot(a.x - b.x, a.y - b.y) || 1, s: Z.s, cx: (a.x + b.x) / 2 - r.left, cy: (a.y + b.y) / 2 - r.top, x: Z.x, y: Z.y };
+}
+function doPinch() {
+  const [a, b] = [...ptrs.values()], r = rectOf();
+  const d = Math.hypot(a.x - b.x, a.y - b.y) || 1, ns = clamp(pinch.s * d / pinch.d, Z.min, Z.max);
+  const cx = (a.x + b.x) / 2 - r.left, cy = (a.y + b.y) / 2 - r.top;
+  const px = (pinch.cx - pinch.x) / pinch.s, py = (pinch.cy - pinch.y) / pinch.s;
+  Z.s = ns; Z.x = cx - px * ns; Z.y = cy - py * ns; applyZ();
+}
+vp.addEventListener('pointerdown', e => {
+  if (e.target.closest('.zoom')) return;
+  if (e.pointerType === 'mouse' && e.button !== 0) return;
+  try { vp.setPointerCapture(e.pointerId); } catch (x) {}
+  ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (ptrs.size === 2) { multi = true; gest = null; startPinch(); return; }
+  if (ptrs.size > 2) return;
+  gest = { sx: e.clientX, sy: e.clientY, ox: e.clientX - Z.x, oy: e.clientY - Z.y, seat: seatAt(e), moved: false };
+  vp.style.cursor = 'grabbing';
+});
+vp.addEventListener('pointermove', e => {
+  if (!ptrs.has(e.pointerId)) return;
+  ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (ptrs.size === 2 && pinch) { doPinch(); return; }
+  if (!gest) return;
+  if (!gest.moved && Math.hypot(e.clientX - gest.sx, e.clientY - gest.sy) > 6) gest.moved = true;
+  if (gest.moved) { Z.x = e.clientX - gest.ox; Z.y = e.clientY - gest.oy; applyZ(); }
+});
+const endPtr = e => {
+  if (!ptrs.has(e.pointerId)) return;
+  ptrs.delete(e.pointerId);
+  if (ptrs.size < 2) pinch = null;
+  if (ptrs.size === 0) {
+    if (e.type === 'pointerup' && gest && !gest.moved && !multi && gest.seat) tapSeat(gest.seat);
+    gest = null; multi = false; vp.style.cursor = '';
+  }
+};
+vp.addEventListener('pointerup', endPtr);
+vp.addEventListener('pointercancel', endPtr);
+vp.addEventListener('wheel', e => { e.preventDefault(); const r = rectOf(); zoomAt(e.clientX - r.left, e.clientY - r.top, Z.s * (e.deltaY < 0 ? 1.12 : 1 / 1.12)); }, { passive: false });
+$('zIn').addEventListener('click', () => { const r = rectOf(); zoomAt(r.width / 2, r.height / 2, Z.s * 1.3); });
+$('zOut').addEventListener('click', () => { const r = rectOf(); zoomAt(r.width / 2, r.height / 2, Z.s / 1.3); });
+$('zFit').addEventListener('click', fit);
+if (window.ResizeObserver) new ResizeObserver(() => { if (!ptrs.size) fit(); }).observe(vp); else addEventListener('resize', fit);
+
+$('concertInput').addEventListener('input', e => { S.concert = e.target.value; save(); renderTrade(); });
+$('tagChk').addEventListener('change', e => { S.tag = e.target.checked; save(); renderTrade(); });
+document.querySelectorAll('.tchip').forEach(b => b.addEventListener('click', () => { S.trade = b.dataset.type; save(); renderTrade(); }));
+
+const modalStack = [];
+let lastFocus = null;
+function openModal(id, focusSel) {
+  const m = $(id); if (!m.hidden) return;
+  lastFocus = document.activeElement; m.hidden = false; modalStack.push(id); document.body.classList.add('lock');
+  const f = (focusSel && m.querySelector(focusSel)) || m.querySelector('input[type=text],button:not(.x)');
+  if (f) setTimeout(() => f.focus({ preventScroll: true }), 30);
+}
+function closeModal(id) {
+  const m = $(id); if (m.hidden) return;
+  m.hidden = true; const i = modalStack.lastIndexOf(id); if (i >= 0) modalStack.splice(i, 1);
+  if (!modalStack.length) document.body.classList.remove('lock');
+  if (id === 'mGuide') store.set(LS_GUIDE, $('guideHide').checked ? '1' : '0');
+  if (lastFocus && lastFocus.focus) { try { lastFocus.focus({ preventScroll: true }); } catch (e) {} }
+}
+document.querySelectorAll('.ov').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) closeModal(m.id); });
+  m.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', () => closeModal(m.id)));
+});
+addEventListener('keydown', e => {
+  if (e.key !== 'Escape') return;
+  if (modalStack.length) { closeModal(modalStack[modalStack.length - 1]); return; }
+  closeMenus();
+});
+
+function openGuide() { $('guideHide').checked = store.get(LS_GUIDE) === '1'; openModal('mGuide', '.btn.y'); }
+$('helpBtn').addEventListener('click', openGuide);
+
+let confirmFn = null;
+function askConfirm(title, body, okLabel, fn) {
+  $('cfH').textContent = title; $('cfBody').textContent = body; $('cfOk').textContent = okLabel; confirmFn = fn;
+  openModal('mConfirm', '#cfOk');
+}
+$('cfOk').addEventListener('click', () => { const f = confirmFn; confirmFn = null; closeModal('mConfirm'); if (f) f(); });
+
+let gm = { id: null, color: PALETTE[0] };
+function renderSwatches() {
+  const sw = $('gmSw'); sw.textContent = '';
+  PALETTE.forEach(c => {
+    const b = el('button'); b.type = 'button'; b.style.background = c; b.setAttribute('role', 'radio'); b.setAttribute('aria-label', c);
+    b.setAttribute('aria-checked', gm.color === c ? 'true' : 'false');
+    b.addEventListener('click', () => { gm.color = c; renderSwatches(); });
+    sw.append(b);
+  });
+}
+function openGroupModal(g) {
+  gm = g ? { id: g.id, color: g.color } : { id: null, color: PALETTE.find(c => !S.groups.some(x => x.color === c)) || PALETTE[0] };
+  $('gmH').textContent = g ? t('gEdit') : t('gNew');
+  $('gmName').value = g ? (g.name || '') : ''; $('gmName').placeholder = g ? gName(g) : `${t('groupWord')} ${S.nextN}`;
+  $('gmDel').hidden = !g || S.groups.length < 2;
+  renderSwatches(); openModal('mGroup', '#gmName');
+}
+$('newGroup').addEventListener('click', () => {
+  if (S.groups.length >= MAX_GROUPS) { bubble($('newGroup'), t('maxGroups')); return; }
+  openGroupModal(null);
+});
+$('gmSave').addEventListener('click', () => {
+  const name = $('gmName').value.trim() || null;
+  if (gm.id) { const g = findGroup(gm.id); if (g) { g.name = name; g.color = gm.color; } }
+  else { const g = { id: 'g' + uid(), n: S.nextN++, name, color: gm.color }; S.groups.push(g); S.brush = g.id; }
+  closeModal('mGroup'); save(); renderAll();
+});
+$('gmDel').addEventListener('click', () => {
+  const id = gm.id; closeModal('mGroup');
+  askConfirm(t('delGroupTitle'), t('delGroupBody'), t('delete'), () => {
+    S.groups = S.groups.filter(g => g.id !== id);
+    S.rounds.forEach(r => { Object.keys(r.seats).forEach(k => { if (r.seats[k] === id) delete r.seats[k]; }); });
+    if (S.brush === id) S.brush = S.groups[0].id;
+    if (S.inc) { S.inc = S.inc.filter(x => x !== id); }
+    save(); renderAll();
+  });
+});
+$('gmName').addEventListener('keydown', e => { if (e.key === 'Enter') $('gmSave').click(); });
+
+function closeMenus() {
+  $('moreMenu').hidden = true; $('moreBtn').setAttribute('aria-expanded', 'false');
+  $('langMenu').hidden = true; $('langBtn').setAttribute('aria-expanded', 'false');
+}
+$('moreBtn').addEventListener('click', e => {
+  e.stopPropagation(); const open = $('moreMenu').hidden; closeMenus();
+  if (open) { $('moreMenu').hidden = false; $('moreBtn').setAttribute('aria-expanded', 'true'); }
+});
+$('langBtn').addEventListener('click', e => {
+  e.stopPropagation(); const open = $('langMenu').hidden; closeMenus();
+  if (open) { $('langMenu').hidden = false; $('langBtn').setAttribute('aria-expanded', 'true'); }
+});
+document.addEventListener('click', e => { if (!e.target.closest('.pop')) closeMenus(); });
+$('langMenu').addEventListener('click', e => { const b = e.target.closest('[data-lang]'); if (!b) return; closeMenus(); setLang(b.dataset.lang); });
+$('moreMenu').addEventListener('click', e => {
+  const b = e.target.closest('[data-act]'); if (!b) return; closeMenus();
+  const act = b.dataset.act;
+  if (act === 'rename') { $('rmName').value = cur().name || ''; $('rmName').placeholder = t('roundAuto', S.cur + 1); openModal('mRound', '#rmName'); }
+  else if (act === 'copy') {
+    if (S.rounds.length >= MAX_ROUNDS) { bubble($('moreBtn'), t('maxRounds')); return; }
+    const base = rName(S.cur);
+    S.rounds.push({ id: uid(), name: `${base} ${t('copySuffix')}`.slice(0, 16), seats: JSON.parse(JSON.stringify(cur().seats)) });
+    S.cur = S.rounds.length - 1; save(); renderAll();
+  }
+  else if (act === 'layout') openLayout();
+  else if (act === 'reset') askConfirm(t('resetTitle'), t('resetBody'), t('resetOk'), () => { cur().seats = {}; save(); renderAll(); });
+  else if (act === 'delete') askConfirm(t('delRoundTitle'), t('delRoundBody'), t('delete'), () => {
+    S.rounds.splice(S.cur, 1); S.cur = clamp(S.cur, 0, S.rounds.length - 1); save(); renderAll();
+  });
+});
+$('rmSave').addEventListener('click', () => { cur().name = $('rmName').value.trim() || null; closeModal('mRound'); save(); renderAll(); });
+$('rmName').addEventListener('keydown', e => { if (e.key === 'Enter') $('rmSave').click(); });
+
+let draft = [];
+function renderLayoutRows() {
+  const box = $('lyRows'); box.textContent = '';
+  draft.forEach((r, i) => {
+    const wrap = el('div', 'lrow' + (r.kind === 'div' ? ' div' : ''));
+    const f = el('div', 'f');
+    const field = (label, input) => { const l = el('label'); l.append(document.createTextNode(label), input); return l; };
+    const mkIn = (type, val, max, cb) => { const inp = el('input'); inp.type = type; inp.value = val; if (type === 'number') { inp.min = 0; inp.max = max; inp.inputMode = 'numeric'; } else inp.maxLength = max; inp.addEventListener('input', () => cb(inp.value)); return inp; };
+    if (r.kind === 'div') {
+      f.append(field(t('dividerLabel'), mkIn('text', r.label, 12, v => { r.label = v; })));
+    } else {
+      f.append(
+        field(t('rowLabel'), mkIn('text', r.label, 6, v => { r.label = v; })),
+        field(t('seatCount'), mkIn('number', r.count, 40, v => { r.count = clamp(parseInt(v, 10) || 1, 1, 40); })),
+        field(t('aisle'), mkIn('number', r.aisle || 0, 39, v => { r.aisle = clamp(parseInt(v, 10) || 0, 0, 39); }))
+      );
+    }
+    const acts = el('div', 'acts');
+    const ab = (txt, label, fn, dis) => { const b = el('button', '', txt); b.type = 'button'; b.setAttribute('aria-label', label); b.disabled = !!dis; b.addEventListener('click', fn); return b; };
+    acts.append(
+      ab('▲', t('up'), () => { [draft[i - 1], draft[i]] = [draft[i], draft[i - 1]]; renderLayoutRows(); }, i === 0),
+      ab('▼', t('down'), () => { [draft[i + 1], draft[i]] = [draft[i], draft[i + 1]]; renderLayoutRows(); }, i === draft.length - 1),
+      ab('✕', t('remove'), () => { draft.splice(i, 1); renderLayoutRows(); }, draft.length < 2)
+    );
+    wrap.append(f, acts); box.append(wrap);
+  });
+}
+function openLayout() { draft = JSON.parse(JSON.stringify(S.layout)); renderLayoutRows(); openModal('mLayout', '.presets .btn'); }
+$('presets').addEventListener('click', e => { const b = e.target.closest('[data-preset]'); if (!b) return; draft = presetLayout(b.dataset.preset); renderLayoutRows(); });
+$('lyAddRow').addEventListener('click', () => { draft.push(rowDef(String(draft.filter(r => r.kind === 'row').length + 1), 12)); renderLayoutRows(); });
+$('lyAddDiv').addEventListener('click', () => { draft.push(divDef('')); renderLayoutRows(); });
+$('lyApply').addEventListener('click', () => {
+  draft.forEach(r => {
+    if (r.kind === 'row') { r.label = (r.label || '').trim() || '-'; r.count = clamp(r.count | 0 || 1, 1, 40); r.aisle = r.aisle >= r.count ? 0 : Math.max(0, r.aisle | 0); }
+  });
+  const rows = draft.filter(r => r.kind === 'row'); if (!rows.length) return;
+  S.layout = draft;
+  const valid = new Set(); rows.forEach(r => { for (let n = 1; n <= r.count; n++) valid.add(r.id + ':' + n); });
+  S.rounds.forEach(rd => { Object.keys(rd.seats).forEach(k => { if (!valid.has(k)) delete rd.seats[k]; }); });
+  closeModal('mLayout'); save(); renderAll();
+});
+
+async function copyText(s) {
+  try { if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(s); return true; } } catch (e) {}
+  const ta = document.createElement('textarea');
+  ta.value = s; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;font-size:16px';
+  document.body.append(ta); ta.focus(); ta.select(); ta.setSelectionRange(0, s.length);
+  let ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+  ta.remove(); return ok;
+}
+$('copyBtn').addEventListener('click', async () => {
+  const ok = await copyText(tradeText());
+  if (ok) { flash($('copyLbl'), 'copied'); bubble($('copyBtn'), t('copyToast')); }
+  else bubble($('copyBtn'), t('copyFail'));
+});
+
+function rr(c, x, y, w, h, r) {
+  r = Math.min(r, w / 2, h / 2); c.beginPath();
+  c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath();
+}
+function wrapText(c, text, maxW, maxLines) {
+  const chars = [...text], lines = []; let line = '';
+  for (const ch of chars) {
+    if (c.measureText(line + ch).width > maxW && line) { lines.push(line); line = ch; } else line += ch;
+  }
+  if (line) lines.push(line);
+  if (lines.length > maxLines) {
+    const kept = lines.slice(0, maxLines); let last = kept[maxLines - 1];
+    while (last && c.measureText(last + '…').width > maxW) last = last.slice(0, -1);
+    kept[maxLines - 1] = last + '…'; return kept;
+  }
+  return lines;
+}
+async function buildImage() {
+  const W = 1080, P = 60, rd = cur();
+  const SANS = '"Noto Sans KR","Noto Sans CJK KR","Noto Sans CJK JP","Apple SD Gothic Neo","Malgun Gothic","Hiragino Sans",sans-serif';
+  const NUM = '"Outfit","Noto Sans KR","Noto Sans CJK KR",sans-serif';
+  try { await Promise.all([document.fonts.load('700 40px "Noto Sans KR"'), document.fonts.load('500 40px "Noto Sans KR"'), document.fonts.load('700 24px "Outfit"')]); } catch (e) {}
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = 5200;
+  const c = cv.getContext('2d');
+  c.fillStyle = '#ffffff'; c.fillRect(0, 0, W, cv.height);
+  const font = (w, s, f) => { c.font = `${w} ${s}px ${f || SANS}`; };
+  const total = heldTotal(rd), roundTitle = `${rName(S.cur)} ${t('mapTitle')}`, concert = S.concert.trim();
+  let y = P;
+
+  font(700, 56); c.fillStyle = '#1d1c1a'; c.textAlign = 'left';
+  const lines = wrapText(c, concert || roundTitle, W - 2 * P, 2);
+  lines.forEach((ln, i) => c.fillText(ln, P, y + 54 + i * 68));
+  y += lines.length * 68 + 10;
+  const chipText = t('held', total); font(700, 28); const cw = c.measureText(chipText).width + 48;
+  if (concert) { font(500, 32); c.fillStyle = '#6b6455'; c.fillText(wrapText(c, roundTitle, W - 2 * P - cw - 20, 1)[0], P, y + 36); }
+  rr(c, W - P - cw, y, cw, 50, 25); c.fillStyle = '#FFF3C4'; c.fill(); c.strokeStyle = '#F2DB82'; c.lineWidth = 2; c.stroke();
+  font(700, 28); c.fillStyle = '#6b5300'; c.textAlign = 'center'; c.fillText(chipText, W - P - cw / 2, y + 35); c.textAlign = 'left';
+  y += 50 + 28;
+
+  const sh = 60; c.save(); rr(c, P, y, W - 2 * P, sh, 12); c.restore();
+  c.save(); c.beginPath(); c.moveTo(P, y); c.lineTo(W - P, y); c.lineTo(W - P, y + sh - 30); c.arcTo(W - P, y + sh, W - P - 30, y + sh, 30); c.lineTo(P + 30, y + sh); c.arcTo(P, y + sh, P, y + sh - 30, 30); c.closePath();
+  c.fillStyle = '#FFF3C4'; c.fill(); c.clip(); c.fillStyle = '#E0A800'; c.fillRect(P, y + sh - 5, W - 2 * P, 5); c.restore();
+  font(700, 26, NUM); c.fillStyle = '#6b5300'; c.textAlign = 'center'; if ('letterSpacing' in c) c.letterSpacing = '8px'; c.fillText('STAGE', W / 2 + 4, y + 38); if ('letterSpacing' in c) c.letterSpacing = '0px'; c.textAlign = 'left';
+  y += sh + 18;
+
+  const rowsG = S.layout.map(r => {
+    if (r.kind === 'div') return { div: true, label: r.label };
+    const cells = [];
+    const seat = n => cells.push({ s: true, n, k: r.id + ':' + n });
+    if (r.aisle > 0 && r.aisle < r.count) { for (let n = 1; n <= r.aisle; n++) seat(n); cells.push({ l: r.label }); for (let n = r.aisle + 1; n <= r.count; n++) seat(n); }
+    else { cells.push({ l: r.label }); for (let n = 1; n <= r.count; n++) seat(n); }
+    return { cells };
+  });
+  const availW = W - 2 * P - 48 - 56;
+  const lw = (u, txt) => { font(700, u * .42, NUM); return Math.max(u * 1.1, c.measureText(txt).width + u * .4); };
+  const rowW = (cells, u) => { const g = Math.max(3, u * .14); return cells.reduce((a, x) => a + (x.s ? u : lw(u, x.l)), 0) + (cells.length - 1) * g; };
+  let u = 46;
+  for (let i = 0; i < 8; i++) { const mw = Math.max(...rowsG.filter(r => r.cells).map(r => rowW(r.cells, u))); if (mw <= availW) break; u *= availW / mw * .995; }
+  const gap = Math.max(3, u * .14), rowGap = Math.max(6, u * .26), divH = u * .9;
+  const mapH = rowsG.reduce((a, r) => a + (r.div ? divH : u), 0) + (rowsG.length - 1) * rowGap;
+  const innerH = 28 + mapH + 28 + 36;
+  const panelH = innerH + 48;
+  rr(c, P, y, W - 2 * P, panelH, 28); c.fillStyle = '#FAF7EE'; c.fill(); c.strokeStyle = '#e6dfcc'; c.lineWidth = 2; c.stroke();
+  const ix = P + 24, iy = y + 24, iw = W - 2 * P - 48;
+  rr(c, ix, iy, iw, innerH, 20); c.fillStyle = '#ffffff'; c.fill();
+  const pc = document.createElement('canvas'); pc.width = pc.height = 8; const px = pc.getContext('2d');
+  px.fillStyle = '#ffffff'; px.fillRect(0, 0, 8, 8); px.strokeStyle = HOPE_COLOR; px.lineWidth = 3; px.beginPath(); px.moveTo(-2, 10); px.lineTo(10, -2); px.moveTo(-2, 2); px.lineTo(2, -2); px.moveTo(6, 10); px.lineTo(10, 6); px.stroke();
+  const hatch = c.createPattern(pc, 'repeat');
+  let ry = iy + 28;
+  rowsG.forEach(r => {
+    if (r.div) {
+      c.strokeStyle = '#cfc6ae'; c.lineWidth = 2; c.setLineDash([8, 6]);
+      c.beginPath(); c.moveTo(ix + 28, ry + divH / 2); c.lineTo(ix + iw - 28, ry + divH / 2); c.stroke(); c.setLineDash([]);
+      font(700, Math.max(18, u * .42), NUM); const tw = c.measureText(r.label).width + 24;
+      c.fillStyle = '#ffffff'; c.fillRect(ix + iw / 2 - tw / 2, ry, tw, divH);
+      c.fillStyle = '#6b6455'; c.textAlign = 'center'; c.fillText(r.label, ix + iw / 2, ry + divH / 2 + u * .15); c.textAlign = 'left';
+      ry += divH + rowGap; return;
+    }
+    let x = ix + (iw - rowW(r.cells, u)) / 2;
+    r.cells.forEach(cell => {
+      if (cell.l != null) {
+        const w = lw(u, cell.l); font(700, u * .42, NUM); c.fillStyle = '#6b6455'; c.textAlign = 'center'; c.fillText(cell.l, x + w / 2, ry + u * .66); c.textAlign = 'left'; x += w + gap; return;
+      }
+      const v = rd.seats[cell.k], g = v && v !== HOPE ? findGroup(v) : null;
+      rr(c, x, ry, u, u, u * .22);
+      if (v === HOPE) { c.fillStyle = hatch; c.fill(); c.strokeStyle = HOPE_COLOR; c.lineWidth = 2; c.stroke(); }
+      else if (g) { c.fillStyle = g.color; c.fill(); c.strokeStyle = 'rgba(29,28,26,.35)'; c.lineWidth = 2; c.stroke(); }
+      else { c.fillStyle = '#FAF7EE'; c.fill(); c.strokeStyle = '#cfc6ae'; c.lineWidth = 2; c.stroke(); }
+      if (u >= 19) {
+        font(500, u * .42, NUM); c.textAlign = 'center';
+        if (v === HOPE) { c.lineWidth = 4; c.strokeStyle = '#ffffff'; c.strokeText(String(cell.n), x + u / 2, ry + u * .64); }
+        c.fillStyle = (v ? '#1d1c1a' : '#6b6455'); c.fillText(String(cell.n), x + u / 2, ry + u * .64); c.textAlign = 'left';
+      }
+      x += u + gap;
+    });
+    ry += u + rowGap;
+  });
+  font(500, 24); c.fillStyle = '#6b6455'; c.textAlign = 'right'; c.fillText(t('entrance'), ix + iw - 28, iy + innerH - 22); c.textAlign = 'left';
+  y += panelH + 36;
+
+  const cnt = counts(rd);
+  const legend = S.groups.filter(g => cnt[g.id]).map(g => ({ name: gName(g), n: cnt[g.id], color: g.color }));
+  if (cnt[HOPE]) legend.push({ name: t('hope'), n: cnt[HOPE], hope: true });
+  if (legend.length) {
+    font(500, 28); let x = P, ly = y;
+    legend.forEach(it => {
+      const txt = `${it.name}  ${t('seatsN', it.n)}`, w = 30 + 12 + c.measureText(txt).width + 36;
+      if (x + w > W - P + 36 && x > P) { x = P; ly += 54; }
+      c.beginPath(); c.arc(x + 15, ly + 20, 15, 0, Math.PI * 2);
+      c.fillStyle = it.hope ? hatch : it.color; c.fill(); c.strokeStyle = it.hope ? HOPE_COLOR : 'rgba(29,28,26,.3)'; c.lineWidth = 2; c.stroke();
+      c.fillStyle = '#1d1c1a'; c.fillText(txt, x + 42, ly + 30); x += w;
+    });
+    y = ly + 54;
+  }
+
+  y += 22;
+  font(500, 22); c.fillStyle = 'rgba(107,100,85,.65)'; c.textAlign = 'center';
+  c.fillText('티켓팅 좌석 매니저 × 루미 오락실 · @lumimori38', W / 2, y + 22);
+  const H = Math.ceil(y + 22 + 44);
+  const out = document.createElement('canvas'); out.width = W; out.height = H;
+  out.getContext('2d').drawImage(cv, 0, 0, W, H, 0, 0, W, H);
+  return out;
+}
+const ua = navigator.userAgent;
+const isIOS = /iphone|ipad|ipod/i.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const isInApp = /Instagram|FBAN|FBAV|Twitter|KAKAOTALK|Line\/|NAVER\(inapp|everytimeApp/i.test(ua);
+$('saveBtn').addEventListener('click', async () => {
+  const btn = $('saveBtn'); if (btn.disabled) return; btn.disabled = true;
+  try {
+    const cv = await buildImage();
+    if (isIOS || isInApp) {
+      $('imgOut').src = cv.toDataURL('image/png'); $('imgOut').alt = $('mapTitle').textContent; openModal('mImg', '.btn');
+    } else {
+      const blob = await new Promise(r => cv.toBlob(r, 'image/png'));
+      const name = `${(S.concert.trim() || 'seat-map').replace(/[\\/:*?"<>|]/g, '_')}_${rName(S.cur).replace(/[\\/:*?"<>|]/g, '_')}.png`;
+      const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.append(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      flash($('saveLbl'), 'saved');
+    }
+  } catch (e) { bubble($('saveBtn'), 'Error'); }
+  btn.disabled = false;
+});
+
+(function init() {
+  const saved = store.get(LS_LANG); lang = L[saved] ? saved : 'ko';
+  applyI18n(); renderAll();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  if (store.get(LS_GUIDE) !== '1') setTimeout(openGuide, 350);
+})();
+})();
+</script>
+</body>
+</html>
